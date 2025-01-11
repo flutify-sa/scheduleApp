@@ -77,37 +77,72 @@ class SchedulerState extends State<Scheduler> {
       appBar: AppBar(
         title: Text('Scheduler'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Text Fields for task title and description
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(
-                labelText: 'Task Title',
-                border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Text Fields for task title and description
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(
+                  labelText: 'Task Title',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            TextField(
-              controller: descriptionController,
-              maxLines: 2, // To make the description multiline
-              decoration: InputDecoration(
-                labelText: 'Task Description',
-                border: OutlineInputBorder(),
+              SizedBox(height: 8),
+              TextField(
+                controller: descriptionController,
+                maxLines: 2, // To make the description multiline
+                decoration: InputDecoration(
+                  labelText: 'Task Description',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            // Button for selecting task-specific start and end time
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => _selectTaskTimeRange(
-                        context), // Trigger task time selection
+              SizedBox(height: 8),
+              // Button for selecting task-specific start and end time
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _selectTaskTimeRange(
+                          context), // Trigger task time selection
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.orange,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        taskStartTime == null || taskEndTime == null
+                            ? 'Select Task Time'
+                            : 'Task Time: ${taskStartTime!.format(context)} - ${taskEndTime!.format(context)}',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Button for selecting main scheduler start and end time
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color:
+                        Colors.green[50], // Background color of the container
+                    borderRadius: BorderRadius.circular(12), // Border radius
+                    border: Border.all(
+                      color: Colors.blue,
+                    ),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () => _selectTimeRange(
+                        context), // Trigger main scheduler time selection
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Colors.orange,
@@ -118,120 +153,88 @@ class SchedulerState extends State<Scheduler> {
                       ),
                     ),
                     child: Text(
-                      taskStartTime == null || taskEndTime == null
-                          ? 'Select Task Time'
-                          : 'Task Time: ${taskStartTime!.format(context)} - ${taskEndTime!.format(context)}',
+                      startTime == null || endTime == null
+                          ? 'Select Start and End Time'
+                          : 'Scheduler Times: ${startTime!.format(context)} - ${endTime!.format(context)}',
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            // Button for selecting main scheduler start and end time
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.green[50], // Background color of the container
-                  borderRadius: BorderRadius.circular(12), // Border radius
-                  border: Border.all(
-                    color: Colors.blue,
-                  ),
-                ),
-                child: ElevatedButton(
-                  onPressed: () => _selectTimeRange(
-                      context), // Trigger main scheduler time selection
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.orange,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    startTime == null || endTime == null
-                        ? 'Select Start and End Time'
-                        : 'Scheduler Times: ${startTime!.format(context)} - ${endTime!.format(context)}',
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
-            ),
-            // Scrollable time slots
-            Flexible(
-              child: Column(
-                children: [
-                  // Time Bar
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: List.generate(48, (index) {
-                        final hour = index ~/ 2;
-                        final minute = (index % 2) * 30;
-                        final time =
-                            '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-
-                        final currentSlotMinutes = hour * 60 + minute;
-                        final isWithinRange = startTime != null &&
-                            endTime != null &&
-                            currentSlotMinutes >= timeToMinutes(startTime!) &&
-                            currentSlotMinutes <=
-                                timeToMinutes(endTime!); // Change < to <=
-
-                        return Container(
-                          alignment: Alignment.center,
-                          width: 70,
-                          height: 20,
-                          margin: EdgeInsets.symmetric(horizontal: 0),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isWithinRange ? Colors.purple : Colors.blue,
-                          ),
-                          child: Text(
-                            time,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-                  // Task Time Range - Display Task Time Range Below the Time Bar
-                  if (taskStartTime != null && taskEndTime != null)
-                    Container(
-                      margin: EdgeInsets.only(top: 8.0),
+              // Time Bar
+              Container(
+                height: 700, // Make sure to adjust the height as needed
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: [
-                          // Position the task time range container at the correct slot index
-                          Container(
-                            width: (timeToSlotIndex(taskEndTime!) -
-                                    timeToSlotIndex(taskStartTime!)) *
-                                70.0, // Calculate width of the task time range
-                            height: 20, // Match the height of the time slot bar
+                        children: List.generate(48, (index) {
+                          final hour = index ~/ 2;
+                          final minute = (index % 2) * 30;
+                          final time =
+                              '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+
+                          final currentSlotMinutes = hour * 60 + minute;
+                          final isWithinRange = startTime != null &&
+                              endTime != null &&
+                              currentSlotMinutes >= timeToMinutes(startTime!) &&
+                              currentSlotMinutes <=
+                                  timeToMinutes(endTime!); // Change < to <=
+
+                          return Container(
                             alignment: Alignment.center,
+                            width: 70,
+                            height:
+                                700, // Adjust this height for slots as needed
+                            margin: EdgeInsets.symmetric(horizontal: 0),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(4),
+                              color:
+                                  isWithinRange ? Colors.purple : Colors.blue,
                             ),
                             child: Text(
-                              '${taskStartTime!.format(context)} - ${taskEndTime!.format(context)}',
+                              time,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
                               ),
                             ),
-                          ),
-                        ],
+                          );
+                        }),
                       ),
                     ),
-                ],
+                    // Task Time Range - Display Task Time Range
+                    if (taskStartTime != null && taskEndTime != null)
+                      Positioned(
+                        left: (timeToSlotIndex(taskStartTime!) *
+                            70.0), // Positioning the task bar
+                        child: Container(
+                          margin: EdgeInsets.only(top: 8.0),
+                          width: (timeToSlotIndex(taskEndTime!) -
+                                  timeToSlotIndex(taskStartTime!)) *
+                              70.0,
+                          height: 20, // Match the height of the time slot bar
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withValues(),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '${taskStartTime!.format(context)} - ${taskEndTime!.format(context)}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
