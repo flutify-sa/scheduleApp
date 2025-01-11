@@ -161,61 +161,55 @@ class SchedulerState extends State<Scheduler> {
                   ),
                 ),
               ),
-              // Time Bar
-              Container(
-                height: 700, // Make sure to adjust the height as needed
+              // Time Bar Section
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
                 child: Stack(
                   children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: List.generate(48, (index) {
-                          final hour = index ~/ 2;
-                          final minute = (index % 2) * 30;
-                          final time =
-                              '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+                    Row(
+                      children: List.generate(48, (index) {
+                        final hour = index ~/ 2;
+                        final minute = (index % 2) * 30;
+                        final time =
+                            '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 
-                          final currentSlotMinutes = hour * 60 + minute;
-                          final isWithinRange = startTime != null &&
-                              endTime != null &&
-                              currentSlotMinutes >= timeToMinutes(startTime!) &&
-                              currentSlotMinutes <=
-                                  timeToMinutes(endTime!); // Change < to <=
+                        final currentSlotMinutes = hour * 60 + minute;
+                        final isWithinRange = startTime != null &&
+                            endTime != null &&
+                            currentSlotMinutes >= timeToMinutes(startTime!) &&
+                            currentSlotMinutes <= timeToMinutes(endTime!);
 
-                          return Container(
-                            alignment: Alignment.center,
-                            width: 70,
-                            height:
-                                700, // Adjust this height for slots as needed
-                            margin: EdgeInsets.symmetric(horizontal: 0),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color:
-                                  isWithinRange ? Colors.purple : Colors.blue,
+                        return Container(
+                          alignment: Alignment.topCenter,
+                          width: 70,
+                          height: 700, // Adjust height as needed
+                          margin: EdgeInsets.symmetric(horizontal: 0),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isWithinRange ? Colors.purple : Colors.blue,
+                          ),
+                          child: Text(
+                            time,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
                             ),
-                            child: Text(
-                              time,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
+                          ),
+                        );
+                      }),
                     ),
-                    // Task Time Range - Display Task Time Range
+                    // Task Time Range - Display Task Time Range inside the blue area
                     if (taskStartTime != null && taskEndTime != null)
                       Positioned(
-                        left: (timeToSlotIndex(taskStartTime!) *
-                            70.0), // Positioning the task bar
+                        left: (timeToSlotIndex(taskStartTime!) * 70.0),
+                        top: 0,
                         child: Container(
-                          margin: EdgeInsets.only(top: 8.0),
+                          margin: EdgeInsets.only(top: 30.0),
                           width: (timeToSlotIndex(taskEndTime!) -
                                   timeToSlotIndex(taskStartTime!)) *
                               70.0,
-                          height: 20, // Match the height of the time slot bar
+                          height: 20, // Task bar height
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.orange.withValues(),
