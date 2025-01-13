@@ -100,66 +100,81 @@ class SchedulerState extends State<Scheduler> {
                 ),
               ),
               SizedBox(height: 8),
-              // Button for selecting task-specific start and end time
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => _selectTaskTimeRange(
-                          context), // Trigger task time selection
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.orange,
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+              // Row to place both buttons next to each other
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Button for selecting main scheduler start and end time
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors
+                            .green[50], // Background color of the container
+                        borderRadius:
+                            BorderRadius.circular(12), // Border radius
+                        border: Border.all(
+                          color: Colors.blue, // Border color
                         ),
                       ),
-                      child: Text(
-                        taskStartTime == null || taskEndTime == null
-                            ? 'Select Task Time'
-                            : 'Task Time: ${taskStartTime!.format(context)} - ${taskEndTime!.format(context)}',
+                      child: ElevatedButton(
+                        onPressed: () => _selectTimeRange(
+                            context), // Trigger main scheduler time selection
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.orange,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          startTime == null || endTime == null
+                              ? 'Select Start and End Times'
+                              : 'Scheduler Times: ${startTime!.format(context)} - ${endTime!.format(context)}',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              // Button for selecting main scheduler start and end time
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color:
-                        Colors.green[50], // Background color of the container
-                    borderRadius: BorderRadius.circular(12), // Border radius
-                    border: Border.all(
-                      color: Colors.blue,
-                    ),
                   ),
-                  child: ElevatedButton(
-                    onPressed: () => _selectTimeRange(
-                        context), // Trigger main scheduler time selection
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.orange,
-                      padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  // Button for selecting task-specific start and end time
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors
+                            .green[50], // Background color of the container
+                        borderRadius:
+                            BorderRadius.circular(12), // Border radius
+                        border: Border.all(
+                          color: Colors.blue, // Border color
+                        ),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () => _selectTaskTimeRange(
+                            context), // Trigger task time selection
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.orange,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          taskStartTime == null || taskEndTime == null
+                              ? 'Select Task Time'
+                              : 'Task Time: ${taskStartTime!.format(context)} - ${taskEndTime!.format(context)}',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      startTime == null || endTime == null
-                          ? 'Select Start and End Time'
-                          : 'Scheduler Times: ${startTime!.format(context)} - ${endTime!.format(context)}',
-                      textAlign: TextAlign.center,
-                    ),
                   ),
-                ),
+                ],
               ),
               // Time Bar Section
               SingleChildScrollView(
@@ -182,7 +197,7 @@ class SchedulerState extends State<Scheduler> {
                         return Container(
                           alignment: Alignment.topCenter,
                           width: 70,
-                          height: 700, // Adjust height as needed
+                          height: 200, // Adjust height as needed
                           margin: EdgeInsets.symmetric(horizontal: 0),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 2),
